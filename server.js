@@ -3,19 +3,20 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
-// Requiring our Note and Article models
+var exphbs = require("express-handlebars");
+//Models
 var Note = require("./models/Note.js");
 var Article = require("./models/Article.js");
-// Our scraping tools
+//Scrapers
 var request = require("request");
 var cheerio = require("cheerio");
-var exphbs = require("express-handlebars");
+
 
 // Set mongoose to leverage built in JavaScript ES6 Promises
 mongoose.Promise = Promise;
 
-
-var PORT = 8080;
+//Set port
+var PORT = 8080 || process.env.PORT;
 
 //Initialize express
 var app = express();
@@ -49,23 +50,17 @@ db.once("open", function() {
 
 //Routes
 
-
-
-// A GET request to scrape the echojs website
+// A GET request to scrape the NY Times website
 app.get("/scrape", function(req, res) {
 
   request("http://www.nytimes.com", function(error, response, html) {
 
-    // Load the HTML into cheerio and save it to a variable
-    // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
     var $ = cheerio.load(html);
 
-    // An empty array to save the data that we'll scrape
+
     var result = {};
 
-    // Select each element in the HTML body from which you want information.
-    // NOTE: Cheerio selectors function similarly to jQuery's selectors,
-    // but be sure to visit the package's npm page to see how it works
+
     $("article.theme-summary").each(function(i, element) {
 
       var link = $(element).children("h2.story-heading").children("a").attr("href");
@@ -94,13 +89,13 @@ app.get("/scrape", function(req, res) {
 
     });
 
-    // Log the results once you've looped through each of the elements found with cheerio
-    // console.log(results);
+
   });
   res.send("/articles");
 });
 
 
+//A GET request to query all the articles in the Mongo database
 app.get("/articles", function(req, res) {
   Article.find({}, function(error, doc) {
     if (error) {
@@ -113,7 +108,7 @@ app.get("/articles", function(req, res) {
 });
 
 
-// Grab an article by it's ObjectId
+// Query an article by it's ObjectId
 app.get("/articles/:id", function(req, res) {
   // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
   Article.findOne({ "_id": req.params.id })
@@ -132,6 +127,7 @@ app.get("/articles/:id", function(req, res) {
   });
 });
 
+//Save a new note to the database with an id associated with its article
 app.post("/articles/:id", function(req, res) {
   var newNote = new Note(req.body);
 
