@@ -4,6 +4,7 @@ var bodyParser = require("body-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
 var exphbs = require("express-handlebars");
+var path = require("path");
 //Models
 var Note = require("./models/Note.js");
 var Article = require("./models/Article.js");
@@ -33,7 +34,7 @@ app.set("view engine", "handlebars");
 
 
 //Database configuration with mongoose
-mongoose.connect("mongodb://localhost/week18homework");
+mongoose.connect("mongodb://heroku_632qmzsh:j045agcpn4kq2nvav091c3rh35@ds127872.mlab.com:27872/heroku_632qmzsh");
 var db = mongoose.connection;
 
 //Show any mongoose errors
@@ -93,6 +94,11 @@ app.get("/scrape", function(req, res) {
   });
   res.send("/articles");
 });
+
+
+app.get("/", function(req, res) {
+    res.render("index");
+  });
 
 
 //A GET request to query all the articles in the Mongo database
