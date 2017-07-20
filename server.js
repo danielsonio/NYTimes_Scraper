@@ -17,7 +17,7 @@ var cheerio = require("cheerio");
 mongoose.Promise = Promise;
 
 //Set port
-var PORT = 8080 || process.env.PORT;
+var port = 8080 || process.env.PORT;
 
 //Initialize express
 var app = express();
@@ -157,6 +157,6 @@ app.post("/articles/:id", function(req, res) {
   });
 });
 
-app.listen(PORT, function() {
-  console.log("App running on port", PORT);
+app.listen(port, function() {
+  console.log("App running on port", port);
 })
