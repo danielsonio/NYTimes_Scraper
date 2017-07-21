@@ -1,0 +1,21 @@
+.nav-wrapper{
+  background: rgba(39, 132, 200, 0.87);
+  margin-bottom: 25px;
+}
+
+.byline{
+  font-size: 10px;
+}
+
+.headline{
+  font-size: 18px;
+  font: bold;
+  list-style: none;
+  line-height:1px;
+}
+
+
+.summary{
+  font-size: 14px;
+  line-height: 18px;
+}

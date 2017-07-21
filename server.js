@@ -28,13 +28,14 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 
+app.use(express.static(__dirname + "/public"));
 //Make public a static dir
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
+// mongodb://heroku_632qmzsh:j045agcpn4kq2nvav091c3rh35@ds127872.mlab.com:27872/heroku_632qmzsh
 
-//Database configuration with mongoose
-mongoose.connect("mongodb://heroku_632qmzsh:j045agcpn4kq2nvav091c3rh35@ds127872.mlab.com:27872/heroku_632qmzsh");
+mongoose.connect("mongodb://localhost/week18homework");
 var db = mongoose.connection;
 
 //Show any mongoose errors
@@ -74,7 +75,8 @@ app.get("/scrape", function(req, res) {
         result.link = link,
         result.title = title,
         result.author = author,
-        result.summary = summary
+        result.summary = summary,
+        result.saved = false
       }
 
       var entry = new Article(result);
@@ -97,18 +99,52 @@ app.get("/scrape", function(req, res) {
 
 
 app.get("/", function(req, res) {
-    res.render("index");
+  Article.remove({saved:false}, function(error, removed) {
+    if(error) {
+      console.log(error);
+      res.send(error);
+    }
+    else {
+      console.log(removed);
+      res.render("index");
+      }
   });
+});
 
 
-//A GET request to query all the articles in the Mongo database
+app.post("/articles/delete/:id", function(req, res) {
+  Article.findOneAndUpdate({ "_id": req.params.id}, { "saved": false})
+  .exec(function(err, doc) {
+    if (err) {
+      console.log(err)
+    }
+    else {
+      res.send(doc);
+    }
+  });
+});
+
+
+
 app.get("/articles", function(req, res) {
-  Article.find({}, function(error, doc) {
+  Article.find({saved: false}, function(error, doc) {
     if (error) {
       console.log(error);
     }
     else {
       res.render("index", { ars: doc });
+    }
+  });
+});
+
+
+app.get("/saved", function(req, res) {
+  Article.find({saved: true}, function(error, doc) {
+    if (error) {
+      console.log(error);
+    }
+    else {
+      res.render("saved", { ars: doc });
     }
   });
 });
@@ -129,6 +165,18 @@ app.get("/articles/:id", function(req, res) {
     // Otherwise, send the doc to the browser as a json object
     else {
       res.json(doc);
+    }
+  });
+});
+
+app.post("/articles/saved/:id", function(req, res) {
+  Article.findOneAndUpdate({ "_id": req.params.id}, { "saved": true})
+  .exec(function(err, doc) {
+    if (err) {
+      console.log(err)
+    }
+    else {
+      res.send(doc);
     }
   });
 });
