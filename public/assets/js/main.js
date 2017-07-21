@@ -3,7 +3,7 @@
 
   scrape_button.addEventListener("click", function() {
     $.getJSON("/scrape");
-    setTimeout(refreshPage, 2000);
+    setTimeout(refreshPage, 1000);
     function refreshPage() {
       window.location.assign("/articles");
     }
