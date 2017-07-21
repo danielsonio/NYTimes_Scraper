@@ -34,8 +34,8 @@ app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
 // mongodb://heroku_632qmzsh:j045agcpn4kq2nvav091c3rh35@ds127872.mlab.com:27872/heroku_632qmzsh
-
-mongoose.connect("mongodb://localhost/week18homework");
+// mongodb://localhost/week18homework
+mongoose.connect("mongodb://heroku_632qmzsh:j045agcpn4kq2nvav091c3rh35@ds127872.mlab.com:27872/heroku_632qmzsh");
 var db = mongoose.connection;
 
 //Show any mongoose errors
